@@ -1,0 +1,30 @@
+# Web framework
+fastapi==0.115.12
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+
+# Database
+sqlalchemy==2.0.48
+aiosqlite==0.21.0
+
+# Auth
+python-jose[cryptography]==3.4.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.3.0
+
+# LLM
+openai==1.68.2
+
+# Git
+gitpython==3.1.44
+
+# Environment
+python-dotenv==1.1.0
+
+# HTTP client
+httpx==0.28.1
+
+# Testing
+pytest==8.3.5
+pytest-asyncio==0.25.3
+httpx==0.28.1
