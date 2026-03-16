@@ -537,16 +537,16 @@ zeropath/
 **Goal:** Docker setup, README, error handling, edge cases, and final polish.
 
 **Deliverables:**
-- [ ] Dockerfile for backend (Python + uvicorn)
-- [ ] Dockerfile for frontend (Node build + nginx serve)
-- [ ] docker-compose.yml orchestrating both services
-- [ ] .env.example with clear documentation of each variable
-- [ ] Manual setup instructions tested from a fresh clone
-- [ ] Comprehensive README covering all required topics
-- [ ] Error handling across all API endpoints (proper HTTP status codes, error messages)
-- [ ] Loading states, empty states, and error states in frontend
-- [ ] Edge case handling: empty repos, repos with no .py files, LLM API errors, network failures
-- [ ] UI/UX final pass: consistent spacing, responsive layout, clear visual hierarchy
+- [x] Dockerfile for backend (Python + uvicorn)
+- [x] Dockerfile for frontend (Node build + nginx serve)
+- [x] docker-compose.yml orchestrating both services
+- [x] .env.example with clear documentation of each variable
+- [x] Manual setup instructions tested from a fresh clone
+- [x] Comprehensive README covering all required topics
+- [x] Error handling across all API endpoints (proper HTTP status codes, error messages)
+- [x] Loading states, empty states, and error states in frontend
+- [x] Edge case handling: empty repos, repos with no .py files, LLM API errors, network failures
+- [x] UI/UX final pass: consistent spacing, responsive layout, clear visual hierarchy
 
 **Key Tasks:**
 1. Write backend Dockerfile: Python 3.12, pip install, uvicorn entrypoint

@@ -1,0 +1,25 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - sqlite-data:/app
+    environment:
+      - DATABASE_URL=sqlite+aiosqlite:///./zeropath.db
+      - CORS_ORIGINS=http://localhost,http://localhost:80
+      - CLONED_REPOS_DIR=/app/cloned_repos
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  sqlite-data:

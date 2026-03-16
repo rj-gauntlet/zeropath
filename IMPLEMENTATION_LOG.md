@@ -57,3 +57,24 @@
   - Comparison Page: structure verified (requires 2 scans for full test)
   - All severity filter chips, status filter chips, and vuln type dropdown filter correctly
 - **Notes:** All Phase 3 backend endpoints were already implemented during Phase 2 as part of the routers, so this phase was purely frontend. The triage panel successfully saves status changes and notes via PATCH /api/findings/{id}, with real-time UI updates reflecting the new state across all filter chips and finding cards.
+
+## Phase 4: Polish & Ship — 2026-03-16
+- **Status:** Complete
+- **Deliverables:** 10/10 complete
+- **Files Created:**
+  - `backend/Dockerfile` — Python 3.12-slim, git installed for cloning, pip install, uvicorn entrypoint
+  - `backend/.dockerignore` — excludes __pycache__, .env, .db, cloned_repos
+  - `frontend/Dockerfile` — multi-stage (Node 20 build → nginx:alpine serve)
+  - `frontend/nginx.conf` — SPA routing + API proxy to backend with SSE support (proxy_buffering off)
+  - `frontend/.dockerignore` — excludes node_modules, dist
+  - `docker-compose.yml` — backend + frontend services, shared .env, volume for SQLite persistence
+  - `.env.example` — documented all required and optional environment variables
+  - `README.md` — comprehensive documentation covering architecture, prompt design, token management, finding identity, auth security, API reference, deferred features, and next steps
+- **Deviations:**
+  - Error handling was already comprehensive from Phases 2-3 (git failures, empty repos, LLM errors, malformed JSON, per-file error isolation). No additional error handling code needed (minor, beneficial)
+  - Frontend already had loading states, empty states, and error messages from Phases 2-3
+- **Test Results:**
+  - TypeScript: zero errors (`tsc --noEmit` passes clean)
+  - Vite build: succeeds in 146ms, 268KB JS + 26KB CSS (gzipped: 82KB + 6KB)
+  - Backend health check: `GET /api/health` returns 200
+- **Notes:** Phase 4 was primarily about packaging (Docker) and documentation (README). The error handling and edge case coverage was already in good shape from earlier phases. README covers all required interview discussion topics: architecture, prompt design rationale, token/context management, finding identity approach, auth security decisions, deferred features, and known limitations.
