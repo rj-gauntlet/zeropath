@@ -452,17 +452,17 @@ zeropath/
 **Goal:** The heart of the product — submit a repo URL, scan it with the LLM, and display structured findings.
 
 **Deliverables:**
-- [ ] Git service: shallow clone, .py file extraction, size/count caps, skipped file reporting
-- [ ] LLM adapter abstract base class
-- [ ] OpenAI adapter implementation (GPT-4o-mini)
-- [ ] Security analysis prompt templates with structured output specification
-- [ ] Repo summary builder (file tree, imports graph, key function/class signatures)
-- [ ] Scanner orchestrator: clone → summarize → scan each file → fingerprint → store → update status
-- [ ] Fingerprint utility: strip comments/whitespace, normalize, SHA-256 hash
-- [ ] POST /api/scans endpoint with async background task trigger
-- [ ] GET /api/scans/{id}/events SSE endpoint
-- [ ] Frontend: scan submission form (repo URL input)
-- [ ] Frontend: scan status display with real-time SSE updates
+- [x] Git service: shallow clone, .py file extraction, size/count caps, skipped file reporting
+- [x] LLM adapter abstract base class
+- [x] OpenAI adapter implementation (GPT-4o-mini)
+- [x] Security analysis prompt templates with structured output specification
+- [x] Repo summary builder (file tree, imports graph, key function/class signatures)
+- [x] Scanner orchestrator: clone → summarize → scan each file → fingerprint → store → update status
+- [x] Fingerprint utility: strip comments/whitespace, normalize, SHA-256 hash
+- [x] POST /api/scans endpoint with async background task trigger
+- [x] GET /api/scans/{id}/events SSE endpoint
+- [x] Frontend: scan submission form (repo URL input)
+- [x] Frontend: scan status display with real-time SSE updates
 
 **Key Tasks:**
 1. Build git_service.py: `git clone --depth 1`, walk tree for .py files, enforce 50KB/file and 200 file caps, return file contents + skipped file list

@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import init_db
-from app.routers import auth
+from app.routers import auth, scans, findings, repos, events
 
 
 @asynccontextmanager
@@ -84,6 +84,10 @@ async def csrf_middleware(request: Request, call_next):
 
 # Register routers
 app.include_router(auth.router)
+app.include_router(scans.router)
+app.include_router(findings.router)
+app.include_router(repos.router)
+app.include_router(events.router)
 
 
 @app.get("/api/health")

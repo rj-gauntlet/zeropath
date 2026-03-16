@@ -1,42 +1,238 @@
 /**
- * Dashboard page — placeholder for Phase 1.
- * Will show repos, recent scans, and scan submission in Phase 2.
+ * Dashboard page — scan submission, recent scans, and scan detail views.
+ *
+ * Flow:
+ * 1. User sees recent scans + submission form
+ * 2. On submit, scan is created and SSE connection opens
+ * 3. Real-time progress updates stream in
+ * 4. On completion, findings are loaded and displayed
  */
 
-import type { User } from '../types';
+import { useState, useEffect, useCallback } from 'react';
+import type { User, Scan, Finding } from '../types';
+import { scanApi, findingApi } from '../api/endpoints';
+import { useSSE } from '../hooks/useSSE';
+import ScanSubmitForm from '../components/ScanSubmitForm';
+import ScanStatusCard from '../components/ScanStatusCard';
+import FindingsList from '../components/FindingsList';
 
 interface DashboardPageProps {
   user: User;
 }
 
 export default function DashboardPage({ user }: DashboardPageProps) {
+  const [scans, setScans] = useState<Scan[]>([]);
+  const [activeScan, setActiveScan] = useState<Scan | null>(null);
+  const [findings, setFindings] = useState<Finding[]>([]);
+  const [selectedScanId, setSelectedScanId] = useState<number | null>(null);
+  const [loadingScans, setLoadingScans] = useState(true);
+  const [scanProgress, setScanProgress] = useState<string>('');
+  const [scanProgressDetail, setScanProgressDetail] = useState<string>('');
+
+  // Load recent scans on mount
+  useEffect(() => {
+    scanApi
+      .list()
+      .then((data) => {
+        setScans(data);
+        setLoadingScans(false);
+      })
+      .catch(() => setLoadingScans(false));
+  }, []);
+
+  // SSE for real-time updates on active scan
+  const handleSSEEvent = useCallback(
+    (event: { type: string; data: Record<string, unknown> }) => {
+      if (event.type === 'status') {
+        setActiveScan((prev) =>
+          prev ? { ...prev, status: event.data.status as Scan['status'] } : prev
+        );
+        setScanProgress(String(event.data.message || ''));
+      }
+      if (event.type === 'progress') {
+        setScanProgressDetail(String(event.data.message || ''));
+        // Update file counts if provided
+        if (event.data.files_scanned !== undefined) {
+          setActiveScan((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  files_scanned: event.data.files_scanned as number,
+                  files_skipped: (event.data.files_skipped as number) || prev.files_skipped,
+                }
+              : prev
+          );
+        }
+      }
+    },
+    []
+  );
+
+  const handleSSEComplete = useCallback(() => {
+    // Refresh the scan to get final state
+    if (activeScan) {
+      scanApi.get(activeScan.id).then((scan) => {
+        setActiveScan(scan);
+        setScans((prev) => prev.map((s) => (s.id === scan.id ? scan : s)));
+        // Auto-load findings
+        findingApi.list(scan.id).then(setFindings);
+      });
+    }
+  }, [activeScan]);
+
+  useSSE({
+    scanId: activeScan && (activeScan.status === 'queued' || activeScan.status === 'running')
+      ? activeScan.id
+      : null,
+    onEvent: handleSSEEvent,
+    onComplete: handleSSEComplete,
+  });
+
+  // Submit a new scan
+  const handleSubmit = async (repoUrl: string) => {
+    const scan = await scanApi.create(repoUrl);
+    setActiveScan(scan);
+    setFindings([]);
+    setScanProgress('Scan queued...');
+    setScanProgressDetail('');
+    setSelectedScanId(null);
+    // Add to list
+    setScans((prev) => [scan, ...prev]);
+  };
+
+  // View a past scan
+  const handleViewScan = async (scanId: number) => {
+    setSelectedScanId(scanId);
+    setActiveScan(null);
+    const scanFindings = await findingApi.list(scanId);
+    setFindings(scanFindings);
+  };
+
+  // Determine which scan's findings to show
+  const viewingScanId = activeScan?.id || selectedScanId;
+  const viewingScan = activeScan || scans.find((s) => s.id === selectedScanId) || null;
+  const showFindings =
+    viewingScan && (viewingScan.status === 'complete' || viewingScan.status === 'failed');
+
   return (
     <div>
-      {/* Welcome header */}
+      {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
         <p className="text-gray-400 mt-1">
-          Welcome back, {user.email}. Ready to scan some repos.
+          Scan public GitHub repositories for Python security vulnerabilities.
         </p>
       </div>
 
-      {/* Empty state — will be replaced in Phase 2 */}
-      <div className="border border-gray-800 border-dashed rounded-xl p-12 text-center">
-        <div className="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
-          </svg>
-        </div>
-        <h2 className="text-lg font-medium text-white mb-2">No scans yet</h2>
-        <p className="text-gray-400 text-sm max-w-sm mx-auto">
-          Submit a public GitHub repository URL to scan its Python code for security vulnerabilities.
-        </p>
-        <div className="mt-6">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-lg text-sm text-gray-500">
-            <span>Scan submission coming in Phase 2</span>
+      {/* Scan submission */}
+      <ScanSubmitForm
+        onSubmit={handleSubmit}
+        disabled={activeScan?.status === 'queued' || activeScan?.status === 'running'}
+      />
+
+      {/* Active scan progress */}
+      {activeScan && (activeScan.status === 'queued' || activeScan.status === 'running') && (
+        <ScanStatusCard
+          scan={activeScan}
+          progress={scanProgress}
+          detail={scanProgressDetail}
+        />
+      )}
+
+      {/* Findings display */}
+      {showFindings && viewingScanId && (
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium text-white">
+              Findings for {viewingScan?.repo_name || `Scan #${viewingScanId}`}
+            </h2>
+            {viewingScan && (
+              <div className="flex items-center gap-3 text-sm text-gray-400">
+                <span>{viewingScan.files_scanned} files scanned</span>
+                {viewingScan.files_skipped > 0 && (
+                  <span>{viewingScan.files_skipped} skipped</span>
+                )}
+              </div>
+            )}
           </div>
+
+          {viewingScan?.status === 'failed' && (
+            <div className="bg-red-900/20 border border-red-800 rounded-lg p-4 mb-4">
+              <p className="text-red-400 text-sm">
+                Scan failed: {viewingScan.error_message || 'Unknown error'}
+              </p>
+            </div>
+          )}
+
+          <FindingsList findings={findings} />
         </div>
+      )}
+
+      {/* Recent scans list */}
+      <div className="mt-10">
+        <h2 className="text-lg font-medium text-white mb-4">Recent Scans</h2>
+
+        {loadingScans ? (
+          <div className="text-gray-500 text-sm">Loading scans...</div>
+        ) : scans.length === 0 ? (
+          <div className="border border-gray-800 border-dashed rounded-xl p-8 text-center">
+            <p className="text-gray-500 text-sm">
+              No scans yet. Submit a GitHub repo URL above to get started.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {scans.map((scan) => (
+              <button
+                key={scan.id}
+                onClick={() => handleViewScan(scan.id)}
+                className={`w-full text-left px-4 py-3 rounded-lg border transition-colors ${
+                  viewingScanId === scan.id
+                    ? 'border-indigo-600 bg-indigo-900/10'
+                    : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <StatusBadge status={scan.status} />
+                    <span className="text-sm font-medium text-white">
+                      {scan.repo_name || scan.repo_url || `Scan #${scan.id}`}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                    {scan.finding_count > 0 && (
+                      <span className="text-amber-400">{scan.finding_count} findings</span>
+                    )}
+                    <span>{new Date(scan.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const styles: Record<string, string> = {
+    queued: 'bg-gray-700 text-gray-300',
+    running: 'bg-blue-900/50 text-blue-400',
+    complete: 'bg-green-900/50 text-green-400',
+    failed: 'bg-red-900/50 text-red-400',
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+        styles[status] || styles.queued
+      }`}
+    >
+      {status === 'running' && (
+        <span className="w-1.5 h-1.5 bg-blue-400 rounded-full mr-1.5 animate-pulse" />
+      )}
+      {status}
+    </span>
   );
 }
