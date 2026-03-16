@@ -37,3 +37,23 @@
   - Real-time SSE progress updates confirmed working in browser
   - Finding detail expansion with code snippets and explanations verified
 - **Notes:** The scan pipeline successfully handles the full flow: URL → clone → summarize → LLM analysis → fingerprint → store → SSE → display. Flask repo served as a good integration test target with real vulnerabilities found in example code.
+
+## Phase 3: Triage & History — 2026-03-16
+- **Status:** Complete
+- **Deliverables:** 9/9 complete
+- **Files Created/Modified:**
+  - `frontend/src/components/FindingsList.tsx` — enhanced with severity/status stats bar, filter chips (severity, status, vuln type dropdown), triage panel (status select + notes textarea + save), status-colored left borders
+  - `frontend/src/pages/ScanDetailPage.tsx` — new page at /scans/:scanId with breadcrumb nav, scan header, stats grid (files/findings/skipped), SSE for active scans, full findings list with triage
+  - `frontend/src/pages/ScanHistoryPage.tsx` — new page at /repos/:repoId/history with scan list, checkbox A/B selection for comparison, compare button
+  - `frontend/src/pages/ComparePage.tsx` — new page at /scans/:scanId/compare/:otherId with three tabbed categories (new/fixed/persisting), summary cards, color-coded finding cards
+  - `frontend/src/pages/DashboardPage.tsx` — updated with "Details →" links on recent scans
+  - `frontend/src/App.tsx` — added 3 new protected routes
+- **Deviations:**
+  - Backend API endpoints (PATCH findings, GET repos, scan history, compare) were already built in Phase 2 — Phase 3 was entirely frontend work (minor, beneficial)
+- **Test Results:**
+  - Triage workflow verified: changed finding status to "false_positive" with notes, persisted via API, filter chips updated in real-time (Open 18, False Positive 1)
+  - Scan Detail Page: breadcrumb nav, stats grid, severity/status bars, finding list with preserved triage state all working
+  - Scan History Page: renders correctly with scan rows, checkboxes for comparison selection, file/finding counts
+  - Comparison Page: structure verified (requires 2 scans for full test)
+  - All severity filter chips, status filter chips, and vuln type dropdown filter correctly
+- **Notes:** All Phase 3 backend endpoints were already implemented during Phase 2 as part of the routers, so this phase was purely frontend. The triage panel successfully saves status changes and notes via PATCH /api/findings/{id}, with real-time UI updates reflecting the new state across all filter chips and finding cards.

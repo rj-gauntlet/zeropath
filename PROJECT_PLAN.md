@@ -496,15 +496,15 @@ zeropath/
 **Goal:** Make findings actionable with triage workflow, scan history, and cross-scan comparison.
 
 **Deliverables:**
-- [ ] PATCH /api/findings/{id} — update status (open/false_positive/resolved) + triage notes
-- [ ] GET /api/repos/{id}/scans — scan history per repository
-- [ ] GET /api/scans/{id}/compare/{other_id} — compare findings using fingerprints (new/fixed/persisting)
-- [ ] GET /api/repos endpoint — list user's repositories
-- [ ] Frontend: findings list with summary stats bar (counts by severity + status)
-- [ ] Frontend: filter controls (severity, status, vulnerability type)
-- [ ] Frontend: triage panel (dropdown for status, textarea for notes)
-- [ ] Frontend: scan history view per repository
-- [ ] Frontend: scan comparison view (new/fixed/persisting columns)
+- [x] PATCH /api/findings/{id} — update status (open/false_positive/resolved) + triage notes
+- [x] GET /api/repos/{id}/scans — scan history per repository
+- [x] GET /api/scans/{id}/compare/{other_id} — compare findings using fingerprints (new/fixed/persisting)
+- [x] GET /api/repos endpoint — list user's repositories
+- [x] Frontend: findings list with summary stats bar (counts by severity + status)
+- [x] Frontend: filter controls (severity, status, vulnerability type)
+- [x] Frontend: triage panel (dropdown for status, textarea for notes)
+- [x] Frontend: scan history view per repository
+- [x] Frontend: scan comparison view (new/fixed/persisting columns)
 
 **Key Tasks:**
 1. Build finding_service.py: query findings with filters, update triage status, compare two scans by fingerprint set intersection/difference

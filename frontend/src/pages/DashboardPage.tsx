@@ -9,6 +9,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import type { User, Scan, Finding } from '../types';
 import { scanApi, findingApi } from '../api/endpoints';
 import { useSSE } from '../hooks/useSSE';
@@ -164,7 +165,12 @@ export default function DashboardPage({ user }: DashboardPageProps) {
             </div>
           )}
 
-          <FindingsList findings={findings} />
+          <FindingsList
+            findings={findings}
+            onFindingUpdated={(updated) =>
+              setFindings((prev) => prev.map((f) => (f.id === updated.id ? updated : f)))
+            }
+          />
         </div>
       )}
 
@@ -183,30 +189,38 @@ export default function DashboardPage({ user }: DashboardPageProps) {
         ) : (
           <div className="space-y-2">
             {scans.map((scan) => (
-              <button
+              <div
                 key={scan.id}
-                onClick={() => handleViewScan(scan.id)}
-                className={`w-full text-left px-4 py-3 rounded-lg border transition-colors ${
+                className={`rounded-lg border transition-colors ${
                   viewingScanId === scan.id
                     ? 'border-indigo-600 bg-indigo-900/10'
                     : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex items-center justify-between px-4 py-3">
+                  <button
+                    onClick={() => handleViewScan(scan.id)}
+                    className="flex items-center gap-3 text-left"
+                  >
                     <StatusBadge status={scan.status} />
                     <span className="text-sm font-medium text-white">
                       {scan.repo_name || scan.repo_url || `Scan #${scan.id}`}
                     </span>
-                  </div>
+                  </button>
                   <div className="flex items-center gap-4 text-xs text-gray-500">
                     {scan.finding_count > 0 && (
                       <span className="text-amber-400">{scan.finding_count} findings</span>
                     )}
                     <span>{new Date(scan.created_at).toLocaleDateString()}</span>
+                    <Link
+                      to={`/scans/${scan.id}`}
+                      className="text-indigo-400 hover:text-indigo-300"
+                    >
+                      Details &rarr;
+                    </Link>
                   </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         )}
