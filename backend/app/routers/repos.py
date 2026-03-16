@@ -29,6 +29,4 @@ async def get_repo_scans(
 ):
     """Get scan history for a specific repository."""
     scan_service = ScanService(db)
-    scans = await scan_service.list_scans(user.id)
-    # Filter to this repo
-    return [s for s in scans if s["repository_id"] == repo_id]
+    return await scan_service.list_scans_for_repo(user.id, repo_id)

@@ -9,8 +9,9 @@ Sets up:
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
 
 from app.config import settings
 from app.database import init_db
@@ -77,7 +78,7 @@ async def csrf_middleware(request: Request, call_next):
     csrf_header = request.headers.get("X-CSRF-Token")
 
     if not csrf_cookie or not csrf_header or csrf_cookie != csrf_header:
-        raise HTTPException(status_code=403, detail="CSRF validation failed")
+        return JSONResponse(status_code=403, content={"detail": "CSRF validation failed"})
 
     return await call_next(request)
 

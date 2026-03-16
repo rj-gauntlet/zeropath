@@ -171,6 +171,45 @@ class ScanService:
 
         return scan_list
 
+    async def list_scans_for_repo(self, user_id: int, repo_id: int) -> list[dict]:
+        """List scans for a specific repo — filters at the DB level instead of in Python."""
+        result = await self.db.execute(
+            select(Scan).where(
+                Scan.user_id == user_id,
+                Scan.repository_id == repo_id,
+            ).order_by(Scan.created_at.desc())
+        )
+        scans = result.scalars().all()
+
+        scan_list = []
+        for scan in scans:
+            repo_result = await self.db.execute(
+                select(Repository).where(Repository.id == scan.repository_id)
+            )
+            repo = repo_result.scalar_one_or_none()
+
+            count_result = await self.db.execute(
+                select(func.count(Finding.id)).where(Finding.scan_id == scan.id)
+            )
+            finding_count = count_result.scalar() or 0
+
+            scan_list.append({
+                "id": scan.id,
+                "repository_id": scan.repository_id,
+                "status": scan.status,
+                "files_scanned": scan.files_scanned,
+                "files_skipped": scan.files_skipped,
+                "started_at": scan.started_at,
+                "completed_at": scan.completed_at,
+                "error_message": scan.error_message,
+                "created_at": scan.created_at,
+                "repo_url": repo.url if repo else None,
+                "repo_name": repo.name if repo else None,
+                "finding_count": finding_count,
+            })
+
+        return scan_list
+
     async def list_repos(self, user_id: int) -> list[dict]:
         """List all repos for a user with scan counts."""
         result = await self.db.execute(

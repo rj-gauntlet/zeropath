@@ -1,6 +1,8 @@
 """Finding request/response schemas."""
 
 from datetime import datetime
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -23,7 +25,7 @@ class FindingResponse(BaseModel):
 
 
 class FindingTriageRequest(BaseModel):
-    status: str | None = None
+    status: Literal["open", "false_positive", "resolved"] | None = None
     triage_notes: str | None = None
 
 

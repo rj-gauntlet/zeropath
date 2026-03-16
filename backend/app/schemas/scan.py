@@ -1,11 +1,11 @@
 """Scan request/response schemas."""
 
 from datetime import datetime
-from pydantic import BaseModel, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl
 
 
 class ScanCreateRequest(BaseModel):
-    repo_url: str  # Git clone URL
+    repo_url: str = Field(..., min_length=1)  # Git clone URL
 
 
 class ScanResponse(BaseModel):
