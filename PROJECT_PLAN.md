@@ -1,6 +1,8 @@
 # ZeroPath LLM Security Scanner — Project Plan
 
 > Generated from PRD review on 2026-03-16
+>
+> **Status: SHIPPED** — v1.0.0 deployed to Railway on 2026-03-17. See RELEASE.md for details.
 
 ## 1. Product Overview
 
