@@ -21,7 +21,7 @@ interface DashboardPageProps {
   user: User;
 }
 
-export default function DashboardPage({ user }: DashboardPageProps) {
+export default function DashboardPage({ user: _user }: DashboardPageProps) {
   const [scans, setScans] = useState<Scan[]>([]);
   const [activeScan, setActiveScan] = useState<Scan | null>(null);
   const [findings, setFindings] = useState<Finding[]>([]);
@@ -119,8 +119,8 @@ export default function DashboardPage({ user }: DashboardPageProps) {
     <div>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-white">Dashboard</h1>
-        <p className="text-gray-400 mt-1">
+        <h1 className="text-2xl font-semibold text-text-primary">Dashboard</h1>
+        <p className="text-text-muted mt-1">
           Scan public GitHub repositories for Python security vulnerabilities.
         </p>
       </div>
@@ -144,11 +144,11 @@ export default function DashboardPage({ user }: DashboardPageProps) {
       {showFindings && viewingScanId && (
         <div className="mt-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-white">
+            <h2 className="text-lg font-medium text-text-primary">
               Findings for {viewingScan?.repo_name || `Scan #${viewingScanId}`}
             </h2>
             {viewingScan && (
-              <div className="flex items-center gap-3 text-sm text-gray-400">
+              <div className="flex items-center gap-3 text-sm text-text-muted">
                 <span>{viewingScan.files_scanned} files scanned</span>
                 {viewingScan.files_skipped > 0 && (
                   <span>{viewingScan.files_skipped} skipped</span>
@@ -176,13 +176,13 @@ export default function DashboardPage({ user }: DashboardPageProps) {
 
       {/* Recent scans list */}
       <div className="mt-10">
-        <h2 className="text-lg font-medium text-white mb-4">Recent Scans</h2>
+        <h2 className="text-lg font-medium text-text-primary mb-4">Recent Scans</h2>
 
         {loadingScans ? (
-          <div className="text-gray-500 text-sm">Loading scans...</div>
+          <div className="text-text-faint text-sm">Loading scans...</div>
         ) : scans.length === 0 ? (
-          <div className="border border-gray-800 border-dashed rounded-xl p-8 text-center">
-            <p className="text-gray-500 text-sm">
+          <div className="border border-border border-dashed rounded-xl p-8 text-center">
+            <p className="text-text-faint text-sm">
               No scans yet. Submit a GitHub repo URL above to get started.
             </p>
           </div>
@@ -193,8 +193,8 @@ export default function DashboardPage({ user }: DashboardPageProps) {
                 key={scan.id}
                 className={`rounded-lg border transition-colors ${
                   viewingScanId === scan.id
-                    ? 'border-indigo-600 bg-indigo-900/10'
-                    : 'border-gray-800 bg-gray-900/50 hover:border-gray-700'
+                    ? 'border-accent bg-accent/5'
+                    : 'border-border bg-surface/50 hover:border-border-strong'
                 }`}
               >
                 <div className="flex items-center justify-between px-4 py-3">
@@ -203,18 +203,18 @@ export default function DashboardPage({ user }: DashboardPageProps) {
                     className="flex items-center gap-3 text-left"
                   >
                     <StatusBadge status={scan.status} />
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium text-text-primary">
                       {scan.repo_name || scan.repo_url || `Scan #${scan.id}`}
                     </span>
                   </button>
-                  <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-4 text-xs text-text-faint">
                     {scan.finding_count > 0 && (
-                      <span className="text-amber-400">{scan.finding_count} findings</span>
+                      <span className="text-amber-500">{scan.finding_count} findings</span>
                     )}
                     <span>{new Date(scan.created_at).toLocaleDateString()}</span>
                     <Link
                       to={`/scans/${scan.id}`}
-                      className="text-indigo-400 hover:text-indigo-300"
+                      className="text-accent hover:text-accent/80"
                     >
                       Details &rarr;
                     </Link>
@@ -231,10 +231,10 @@ export default function DashboardPage({ user }: DashboardPageProps) {
 
 function StatusBadge({ status }: { status: string }) {
   const styles: Record<string, string> = {
-    queued: 'bg-gray-700 text-gray-300',
-    running: 'bg-blue-900/50 text-blue-400',
-    complete: 'bg-green-900/50 text-green-400',
-    failed: 'bg-red-900/50 text-red-400',
+    queued: 'bg-surface-elevated text-text-muted',
+    running: 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-400',
+    complete: 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400',
+    failed: 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-400',
   };
 
   return (

@@ -65,42 +65,42 @@ export default function ScanDetailPage() {
   };
 
   if (loading) {
-    return <div className="text-gray-500">Loading scan...</div>;
+    return <div className="text-text-faint">Loading scan...</div>;
   }
 
   if (!scan) {
-    return <div className="text-gray-500">Scan not found.</div>;
+    return <div className="text-text-faint">Scan not found.</div>;
   }
 
   return (
     <div>
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-        <Link to="/" className="hover:text-gray-300">Dashboard</Link>
+      <div className="flex items-center gap-2 text-sm text-text-faint mb-6">
+        <Link to="/" className="hover:text-text-muted">Dashboard</Link>
         <span>/</span>
-        <span className="text-gray-300">{scan.repo_name || `Scan #${scan.id}`}</span>
+        <span className="text-text-muted">{scan.repo_name || `Scan #${scan.id}`}</span>
       </div>
 
       {/* Scan header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-semibold text-white">{scan.repo_name || `Scan #${scan.id}`}</h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <h1 className="text-2xl font-semibold text-text-primary">{scan.repo_name || `Scan #${scan.id}`}</h1>
+          <p className="text-text-muted text-sm mt-1">
             {scan.repo_url} &middot; {new Date(scan.created_at).toLocaleString()}
           </p>
         </div>
         <div className="flex items-center gap-3">
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-            scan.status === 'complete' ? 'bg-green-900/50 text-green-400' :
-            scan.status === 'failed' ? 'bg-red-900/50 text-red-400' :
-            scan.status === 'running' ? 'bg-blue-900/50 text-blue-400' :
-            'bg-gray-700 text-gray-300'
+            scan.status === 'complete' ? 'bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-400' :
+            scan.status === 'failed' ? 'bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-400' :
+            scan.status === 'running' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-400' :
+            'bg-surface-elevated text-text-muted'
           }`}>
             {scan.status}
           </span>
           <Link
             to={`/repos/${scan.repository_id}/history`}
-            className="text-sm text-indigo-400 hover:text-indigo-300"
+            className="text-sm text-accent hover:text-accent/80"
           >
             View history
           </Link>
@@ -115,25 +115,25 @@ export default function ScanDetailPage() {
       {/* Scan stats */}
       {scan.status === 'complete' && (
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-white">{scan.files_scanned}</div>
-            <div className="text-xs text-gray-500">Files Scanned</div>
+          <div className="bg-surface border border-border rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-text-primary">{scan.files_scanned}</div>
+            <div className="text-xs text-text-faint">Files Scanned</div>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-white">{scan.finding_count}</div>
-            <div className="text-xs text-gray-500">Findings</div>
+          <div className="bg-surface border border-border rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-text-primary">{scan.finding_count}</div>
+            <div className="text-xs text-text-faint">Findings</div>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-white">{scan.files_skipped}</div>
-            <div className="text-xs text-gray-500">Files Skipped</div>
+          <div className="bg-surface border border-border rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-text-primary">{scan.files_skipped}</div>
+            <div className="text-xs text-text-faint">Files Skipped</div>
           </div>
         </div>
       )}
 
       {/* Error message */}
       {scan.status === 'failed' && scan.error_message && (
-        <div className="bg-red-900/20 border border-red-800 rounded-lg p-4 mb-6">
-          <p className="text-red-400 text-sm">{scan.error_message}</p>
+        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-6">
+          <p className="text-red-500 dark:text-red-400 text-sm">{scan.error_message}</p>
         </div>
       )}
 

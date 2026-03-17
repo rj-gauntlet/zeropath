@@ -15,9 +15,16 @@ FROM nginx:alpine
 # Copy built assets
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy nginx config for SPA routing + API proxy
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx config template (envsubst fills BACKEND_URL at runtime)
+COPY nginx.conf.template /etc/nginx/templates/default.conf.template
+
+# Keep the static nginx.conf for local docker-compose (no envsubst needed)
+COPY nginx.conf /etc/nginx/conf.d/default.conf.bak
+
+# Default backend URL for Railway internal networking
+ENV BACKEND_URL=http://backend:8000
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# Use envsubst to inject BACKEND_URL, then start nginx
+CMD ["/bin/sh", "-c", "envsubst '${BACKEND_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]

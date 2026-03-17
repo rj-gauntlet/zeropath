@@ -4,6 +4,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import ZeroPathLogo from '../components/ZeroPathLogo';
 
 interface SignupPageProps {
   onSignup: (email: string, password: string) => Promise<unknown>;
@@ -44,15 +45,15 @@ export default function SignupPage({ onSignup, error, setError }: SignupPageProp
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-body flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-xl">Z</span>
+          <div className="flex justify-center mb-4">
+            <ZeroPathLogo width={32} height={37} />
           </div>
-          <h1 className="text-2xl font-semibold text-white">Create your account</h1>
-          <p className="text-gray-400 mt-1">Start scanning repos for vulnerabilities</p>
+          <h1 className="text-2xl font-semibold text-text-primary">Create your account</h1>
+          <p className="text-text-muted mt-1">Start scanning repos for vulnerabilities</p>
         </div>
 
         {/* Form */}
@@ -64,7 +65,7 @@ export default function SignupPage({ onSignup, error, setError }: SignupPageProp
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1.5">
+            <label htmlFor="email" className="block text-sm font-medium text-text-muted mb-1.5">
               Email
             </label>
             <input
@@ -73,13 +74,13 @@ export default function SignupPage({ onSignup, error, setError }: SignupPageProp
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-input-bg border border-border-strong rounded-lg text-text-primary placeholder-text-faint focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1.5">
+            <label htmlFor="password" className="block text-sm font-medium text-text-muted mb-1.5">
               Password
             </label>
             <input
@@ -88,13 +89,13 @@ export default function SignupPage({ onSignup, error, setError }: SignupPageProp
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-input-bg border border-border-strong rounded-lg text-text-primary placeholder-text-faint focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               placeholder="At least 8 characters"
             />
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1.5">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-muted mb-1.5">
               Confirm Password
             </label>
             <input
@@ -103,7 +104,7 @@ export default function SignupPage({ onSignup, error, setError }: SignupPageProp
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full px-3 py-2 bg-input-bg border border-border-strong rounded-lg text-text-primary placeholder-text-faint focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
               placeholder="••••••••"
             />
           </div>
@@ -111,15 +112,15 @@ export default function SignupPage({ onSignup, error, setError }: SignupPageProp
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/50 text-white font-medium rounded-lg transition-colors"
+            className="w-full py-2.5 bg-accent hover:bg-accent/90 disabled:bg-accent/50 text-white font-medium rounded-lg transition-colors"
           >
             {submitting ? 'Creating account...' : 'Create account'}
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-400 mt-6">
+        <p className="text-center text-sm text-text-muted mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-400 hover:text-indigo-300">
+          <Link to="/login" className="text-accent hover:text-accent/80">
             Sign in
           </Link>
         </p>

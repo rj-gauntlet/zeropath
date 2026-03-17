@@ -48,13 +48,13 @@ export default function ScanSubmitForm({ onSubmit, disabled }: ScanSubmitFormPro
             onChange={(e) => setRepoUrl(e.target.value)}
             placeholder="https://github.com/owner/repo"
             disabled={disabled || submitting}
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:opacity-50 text-sm"
+            className="w-full px-4 py-3 bg-input-bg border border-border-strong rounded-lg text-text-primary placeholder-text-faint focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-50 text-sm"
           />
         </div>
         <button
           type="submit"
           disabled={disabled || submitting || !repoUrl.trim()}
-          className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors text-sm whitespace-nowrap"
+          className="px-6 py-3 bg-accent hover:bg-accent/90 disabled:bg-surface-elevated disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors text-sm whitespace-nowrap"
         >
           {submitting ? (
             <span className="flex items-center gap-2">

@@ -1,8 +1,65 @@
 @import "tailwindcss";
 
+/* ── Use class-based dark mode (.dark on <html>) ── */
+@custom-variant dark (&:is(.dark *));
+
+/* ── Theme CSS variables ── */
+:root {
+  --body-bg: #ffffff;
+  --surface: #ffffff;
+  --surface-elevated: #f9fafb;
+  --text-primary: rgb(23, 23, 23);
+  --text-muted: rgba(23, 23, 23, 0.6);
+  --text-faint: rgba(23, 23, 23, 0.4);
+  --border-color: #e5e7eb;
+  --border-strong: #d1d5db;
+  --input-bg: #ffffff;
+  --code-bg: #fafafa;
+  --nav-bg: #ffffff;
+}
+
+.dark {
+  --body-bg: #0b0f1a;
+  --surface: #111827;
+  --surface-elevated: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-muted: rgba(241, 245, 249, 0.6);
+  --text-faint: rgba(241, 245, 249, 0.35);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --input-bg: #111827;
+  --code-bg: #0b0f1a;
+  --nav-bg: #111827;
+}
+
+/* ── Register Tailwind semantic utilities ── */
+@theme inline {
+  --color-body: var(--body-bg);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-border: var(--border-color);
+  --color-border-strong: var(--border-strong);
+  --color-input-bg: var(--input-bg);
+  --color-code-bg: var(--code-bg);
+  --color-nav-bg: var(--nav-bg);
+  --color-accent: #2577FF;
+  --color-sev-critical: #ef4444;
+  --color-sev-high: #f97316;
+  --color-sev-medium: #eab308;
+  --color-sev-low: #2577FF;
+  --font-heading: 'DM Sans', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Base styles ── */
 body {
   margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--body-bg);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
