@@ -12,7 +12,6 @@ import os
 import shutil
 import tempfile
 from dataclasses import dataclass, field
-from pathlib import Path
 
 from git import Repo, GitCommandError
 
