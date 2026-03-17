@@ -1,4 +1,4 @@
-name: Deploy to Railway
+name: CI
 
 on:
   push:
@@ -6,9 +6,12 @@ on:
   pull_request:
     branches: [master]
 
+# Railway auto-deploys on push to master via its GitHub integration.
+# This workflow runs lint, typecheck, and build checks only.
+
 jobs:
-  test:
-    name: Lint & Build
+  ci:
+    name: Lint, Typecheck & Build
     runs-on: ubuntu-latest
 
     steps:
@@ -49,37 +52,3 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: npm run build
-
-  deploy-backend:
-    name: Deploy Backend
-    needs: test
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Railway CLI
-        run: npm i -g @railway/cli
-
-      - name: Deploy backend
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --service backend -d
-
-  deploy-frontend:
-    name: Deploy Frontend
-    needs: [test, deploy-backend]
-    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Railway CLI
-        run: npm i -g @railway/cli
-
-      - name: Deploy frontend
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: railway up --service frontend -d
