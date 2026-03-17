@@ -23,8 +23,10 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf.bak
 
 # Default backend URL for Railway internal networking
 ENV BACKEND_URL=http://backend:8000
+# Railway injects PORT; default to 80 for local docker-compose
+ENV PORT=80
 
 EXPOSE 80
 
-# Use envsubst to inject BACKEND_URL, then start nginx
-CMD ["/bin/sh", "-c", "envsubst '${BACKEND_URL}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+# Use envsubst to inject BACKEND_URL and PORT, then start nginx
+CMD ["/bin/sh", "-c", "envsubst '${BACKEND_URL} ${PORT}' < /etc/nginx/templates/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
